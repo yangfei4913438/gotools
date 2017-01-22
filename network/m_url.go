@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-//检查网络状态,超时时间为3秒
+//检查网络状态,超时时间为5秒
 func UrlPing(url string) (string, error) {
 	_, err := net.DialTimeout("tcp", url, time.Second*5)
 	if err == nil {
