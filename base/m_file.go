@@ -39,15 +39,14 @@ func Get_app_name(dirPth string) ([]string, error) {
 }
 
 //按行读取文件。注意：1行文字，返回空字符串切片
-func Readline(file_path string) ([]string, int) {
+func Readline(file_path string) ([]string, error) {
 	//声明空字符串
 	var res []string
 
 	//按行读取文件
-	f, err := os.Open(file_path)
-	if err != nil {
-		res = append(res, err.Error())
-		return res, 1
+	f, op_err := os.Open(file_path)
+	if op_err != nil {
+		return res, op_err
 	}
 	defer f.Close()
 
@@ -62,7 +61,7 @@ func Readline(file_path string) ([]string, int) {
 		}
 	}
 	//返回结果
-	return res, 0
+	return res, nil
 }
 
 //获取文件大小的精确值
