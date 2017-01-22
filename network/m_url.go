@@ -11,12 +11,12 @@ import (
 func UrlPing(url string) (string, error) {
 	_, err := net.DialTimeout("tcp", url, time.Second*5)
 	if err == nil {
-		res := "场所到 " + url + " 的网络正常:)"
+		res := "连接url(" + url + ")成功:)"
 		//网络正常,返回0
 		return res, nil
 	} else {
 		//网络异常,返回1
-		res := "场所到云端(" + url + ")的网络，出现异常: " + err.Error()
+		res := "连接url(" + url + ")失败: " + err.Error()
 		return res, err
 	}
 }
