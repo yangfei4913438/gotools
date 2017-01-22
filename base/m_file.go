@@ -6,7 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"strconv"
 )
 
 //用于读取文件,一次性读取所有的。这个函数用于读取存储提示信息等小段信息的操作。
@@ -68,11 +67,11 @@ func Readline(file_path string) ([]string, error) {
 func GetSize(obj int64) (string, int64) {
 	var res string
 	if obj < 1024 {
-		res = strconv.FormatInt(obj, 10) + "B"
+		res = Int64ToStr(obj) + "B"
 	} else if 1024 <= obj && obj < 1024*1024 {
-		res = strconv.FormatFloat(float64(obj)/1024, 'f', 2, 64) + "k"
+		res = Float64ToStr(float64(obj)/1024) + "K"
 	} else {
-		res = strconv.FormatFloat(float64(obj)/1024/1024, 'f', 2, 64) + "M"
+		res = Float64ToStr(float64(obj)/1024/1024) + "M"
 	}
 	return res, obj
 }

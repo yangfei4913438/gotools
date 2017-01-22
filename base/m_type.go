@@ -4,12 +4,12 @@ import (
 	"strconv"
 )
 
-func IntToStr(x int) (string, error) {
-	return strconv.Itoa(x), nil
+func IntToStr(x int) string {
+	return strconv.Itoa(x)
 }
 
-func Int64ToStr(x int64) (string, error) {
-	return strconv.FormatInt(x, 10), nil
+func Int64ToStr(x int64) string {
+	return strconv.FormatInt(x, 10)
 }
 
 func StrToInt(x string) (int, error) {
@@ -20,10 +20,10 @@ func StrToInt64(x string) (int64, error) {
 	return strconv.ParseInt(x, 10, 64)
 }
 
-func Float64ToStr(x float64) (string, error) {
-	return strconv.FormatFloat(x, 'f', 2, 64), nil
+func Float64ToStr(x float64) string {
+	return strconv.FormatFloat(x, 'f', 2, 64)
 }
 
-func Float32ToStr(x float64) (string, error) {
-	return strconv.FormatFloat(x, 'f', 2, 32), nil
+func Float32ToStr(x float64) string {
+	return strconv.FormatFloat(x, 'f', 2, 32)
 }
