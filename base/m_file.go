@@ -19,7 +19,7 @@ func ReadAll(filePth string) ([]byte, error) {
 }
 
 //获取指定目录下的所有目录名称，不进入下一级目录搜索。
-func Get_app_name(dirPth string) ([]string, error) {
+func Get_dir_name(dirPth string) ([]string, error) {
 	dirs := make([]string, 0, 20)
 	dir_names, err := ioutil.ReadDir(dirPth)
 	if err != nil {
