@@ -10,12 +10,12 @@ import (
 func GetUUID(org_id, machine_type, regist_number string) (string, error) {
 	mac_addr, mac_err := AllMac()
 	if mac_err != nil {
-		return "", mac_err
+		return mac_addr, mac_err
 	}
 	str := org_id + "-" + machine_type + "-" + regist_number + "-" + mac_addr
 	u5, err := uuid.NewV5(uuid.NamespaceURL, []byte(str))
 	if err != nil {
-		return "获取UUID失败!", err
+		return u5, err
 	}
 	return u5.String() + "-" + org_id + "-" + machine_type, nil
 }
@@ -23,7 +23,7 @@ func GetUUID(org_id, machine_type, regist_number string) (string, error) {
 func AllMac() (string, error) {
 	interfaces, err := net.Interfaces()
 	if err != nil {
-		return "", err
+		return interfaces, err
 	}
 	var mac_all_addr string
 	for _, inter := range interfaces {
