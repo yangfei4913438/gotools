@@ -25,7 +25,7 @@ func Get_app_name(dirPth string) ([]string, error) {
 	if err != nil {
 		return dirs, err
 	}
-	
+
 	for _, dir := range dir_names {
 		//只匹配目录
 		if dir.IsDir() {
@@ -42,7 +42,7 @@ func Get_app_name(dirPth string) ([]string, error) {
 func Readline(file_path string) ([]string, int) {
 	//声明空字符串
 	var res []string
-	
+
 	//按行读取文件
 	f, err := os.Open(file_path)
 	if err != nil {
@@ -50,11 +50,11 @@ func Readline(file_path string) ([]string, int) {
 		return res, 1
 	}
 	defer f.Close()
-	
+
 	rd := bufio.NewReader(f)
 	for {
 		line, err := rd.ReadString('\n') //以'\n'为结束符读入一行
-		
+
 		if err != nil || io.EOF == err {
 			break
 		} else {
@@ -80,12 +80,12 @@ func GetSize(obj int64) (string, int64) {
 
 //获取本地文件的大小,返回2个值,一个是带单位的字符串,一个是不带单位的字节
 func GetFileSize(file_addr string) (string, int64) {
-	
+
 	_, err := os.Open(file_addr)
 	if err != nil && os.IsNotExist(err) {
 		return "0B", 0
 	} else {
-		
+
 		file, err := os.Open(file_addr)
 		if err != nil {
 			fmt.Println("打开文件出错:" + err.Error())

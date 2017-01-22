@@ -2,8 +2,8 @@ package base
 
 import (
 	"fmt"
-	"net"
 	"github.com/nu7hatch/gouuid"
+	"net"
 )
 
 //获取机器码
