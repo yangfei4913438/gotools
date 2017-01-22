@@ -5,15 +5,15 @@ import (
 )
 
 //使用方法，有目录写目录，没有目录用"."或者""表示当前目录
-func ShExec(path, cmd string, args ...string) (string, string) {
+func ShExec(path, cmd string, args ...string) (string, error) {
 	Session := sh.NewSession()
 	Session.ShowCMD = false
 	Session.SetDir(path)
 	out, err := Session.Command(cmd, args).Output()
 	if err != nil {
-		return "error", err.Error()
+		return "", err
 	} else {
-		return "ok", string(out)
+		return string(out), nil
 	}
 }
 
@@ -24,56 +24,54 @@ sql info
 EOF
 
 针对正常的shell命令操作，基本上测试下来是没有任何问题的。
-
-还有就是返回值，这里因为涉及到输出，所以没有使用错误类型的返回。只返回了字符串判断。
 */
 
 /*
 例子1：
 func main() {
-	err, out := ShExec("Unzip", "sh", "test.sh")
-	println(err)
-	println(out)
+	sh_out, sh_err := base.ShExec("base", "pwd")
+	if sh_err != nil {
+		fmt.Println("error: ", sh_err.Error())
+	} else {
+		fmt.Println("out: ", sh_out)
+	}
 }
 输出1：
-ok
+out:  /Users/yangfei/goprojects/src/gotools/base
 
 ----------------------------------------------------------------------------
 例子2：
 func main() {
-	err, out := ShExec("ls", "-l")
-	println(err)
-	println(out)
+	sh_out, sh_err := base.ShExec("base1", "pwd")
+	if sh_err != nil {
+		fmt.Println("error: ", sh_err.Error())
+	} else {
+		fmt.Println("out: ", sh_out)
+	}
 }
 输出2：
-error
-exec: "-l": executable file not found in $PATH
+error:  chdir base1: no such file or directory
 
 ----------------------------------------------------------------------------
 例子3：
 func main() {
-	err, out = ShExec(".", "ls", "-l")
-	println(err)
-	println(out)
+	sh_out, sh_err := base.ShExec("", "ls", "-l")
+	if sh_err != nil {
+		fmt.Println("error: ", sh_err.Error())
+	} else {
+		fmt.Println("out: ", sh_out)
+	}
 }
 输出3：
-ok
-total 37816
-drwxr-xr-x   3 yangfei  staff       102 Dec  6 15:42 Download
--rw-r--r--   1 yangfei  staff       976 Dec  7 13:37 README.md
-drwxr-xr-x   5 yangfei  staff       170 Dec  7 14:14 Unzip
--rwxr-xr-x   1 yangfei  staff  19273584 Dec  6 17:45 auto-upgrade
--rw-r--r--   1 yangfei  staff       419 Dec  6 15:18 auto-upgrade.iml
--rw-r--r--   1 yangfei  staff      4053 Dec  6 15:18 auto-upgrade.ipr
--rw-r--r--   1 yangfei  staff     67913 Dec  7 14:13 auto-upgrade.iws
-drwxr-xr-x   5 yangfei  staff       170 Dec  7 11:25 conf
-drwxr-xr-x  14 yangfei  staff       476 Dec  7 09:49 controllers
-drwxr-xr-x   4 yangfei  staff       136 Dec  6 15:42 logs
--rw-r--r--   1 yangfei  staff       610 Dec  7 14:22 main.go
-drwxr-xr-x  25 yangfei  staff       850 Dec  7 14:22 models
-drwxr-xr-x   3 yangfei  staff       102 Dec  6 17:19 routers
-drwxr-xr-x   4 yangfei  staff       136 Dec  6 15:42 sqls
-drwxr-xr-x   3 yangfei  staff       102 Dec  6 15:42 tests
-drwxr-xr-x   3 yangfei  staff       102 Dec  6 15:42 views
+out:  total 232
+-rw-r--r--   1 yangfei  staff   7651 Jan 22 07:19 LICENSE
+-rw-r--r--   1 yangfei  staff    186 Jan 22 08:31 README.md
+drwxr-xr-x  11 yangfei  staff    374 Jan 23 06:34 base
+-rw-r--r--   1 yangfei  staff    806 Jan 22 08:07 gotools.iml
+-rw-r--r--   1 yangfei  staff  36022 Jan 23 06:02 gotools.ipr
+-rw-r--r--   1 yangfei  staff  59386 Jan 23 06:21 gotools.iws
+drwxr-xr-x   5 yangfei  staff    170 Jan 23 05:21 network
+-rw-r--r--   1 yangfei  staff    283 Jan 23 06:34 test.go
+drwxr-xr-x   6 yangfei  staff    204 Jan 23 05:21 time
 
 */

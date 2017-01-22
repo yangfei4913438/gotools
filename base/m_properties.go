@@ -5,7 +5,7 @@ import "strings"
 //获取properties文件中KEY的值
 func Properties_Get_Value(file_path, key string) string {
 	var return_info string
-	info, res := Readline(file_path)
+	info, err := Readline(file_path)
 	if len(info) == 0 {
 		one_info, _ := ReadAll(file_path)
 		str_list := strings.Split(string(one_info), "=")
@@ -13,7 +13,7 @@ func Properties_Get_Value(file_path, key string) string {
 			return_info = CleanSpace(str_list[1])
 		}
 	} else {
-		if res == 0 {
+		if err == nil {
 			for _, i := range info {
 				str_list := strings.Split(i, "=")
 				if CleanSpace(str_list[0]) == key {

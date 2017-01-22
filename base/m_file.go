@@ -112,12 +112,12 @@ func CheckIsExist(addr string) int {
 }
 
 //清空目录, 先删除，再创建
-func ClearDir(dir_path string) (string, string) {
-	cls_err, cls_out := ShExec("", "rm", "-rf", dir_path)
-	if cls_err == "error" {
-		return cls_err, cls_out
+func ClearDir(dir_path string) (string, error) {
+	cls_out, cls_err := ShExec("", "rm", "-rf", dir_path)
+	if cls_err != nil {
+		return cls_out, cls_err
 	} else {
-		err, out := ShExec("", "mkdir", "-p", dir_path)
-		return err, out
+		out, err := ShExec("", "mkdir", "-p", dir_path)
+		return out, err
 	}
 }
