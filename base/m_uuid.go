@@ -7,21 +7,23 @@ import (
 )
 
 //获取机器码
-func GetUUID(org_id, machine_type, regist_number string) (string, int) {
-	_, mac_addr := AllMac()
+func GetUUID(org_id, machine_type, regist_number string) (string, error) {
+	mac_addr, mac_err := AllMac()
+	if mac_err != nil {
+		return "", mac_err
+	}
 	str := org_id + "-" + machine_type + "-" + regist_number + "-" + mac_addr
 	u5, err := uuid.NewV5(uuid.NamespaceURL, []byte(str))
 	if err != nil {
-		fmt.Println("获取UUID失败:" + err.Error())
-		return "", 1
+		return "获取UUID失败!", err
 	}
-	return u5.String() + "-" + org_id + "-" + machine_type, 0
+	return u5.String() + "-" + org_id + "-" + machine_type, nil
 }
 
-func AllMac() (string, string) {
+func AllMac() (string, error) {
 	interfaces, err := net.Interfaces()
 	if err != nil {
-		return "error", err.Error()
+		return "", err
 	}
 	var mac_all_addr string
 	for _, inter := range interfaces {
@@ -39,9 +41,9 @@ func AllMac() (string, string) {
 		}
 	}
 	if len(mac_all_addr) == 0 {
-		//没有匹配的网卡，就返回一组指定的字符串
-		return "ok", "00-0000-0000-0000-0000-0000"
+		//没有匹配的网卡，就返回错误信息
+		return "", ErrorCustom("机器中不存在网卡!")
 	} else {
-		return "ok", string([]byte(mac_all_addr)[:len(mac_all_addr)-1])
+		return string([]byte(mac_all_addr)[:len(mac_all_addr)-1]), nil
 	}
 }
