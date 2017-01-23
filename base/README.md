@@ -7,3 +7,4 @@
 - m_type: 数据类型转换功能
 - m_uuid: 生成机器码
 - m_error: 自定义错误信息功能
+- m_log: beego的日志功能进行了定制
