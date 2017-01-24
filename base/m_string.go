@@ -17,13 +17,7 @@ func CleanSpace(str string) string {
 	return strings.Replace(str, " ", "", -1)
 }
 
-//检查字符串中是否包含某个字符
-//不支持多个字符的包含检查
+//检查字符串中是否包含某个字符,支持单字符和词汇的检查
 func StrContains(str, obj string) bool {
-	var a []interface{}
-	for _, v := range str {
-		a = append(a, fmt.Sprintf("%c", v))
-	}
-	class := mapset.NewSetFromSlice(a)
-	return class.Contains(obj)
+	return strings.Contains(str, obj)
 }
