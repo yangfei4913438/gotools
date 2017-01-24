@@ -1,8 +1,6 @@
 package base
 
 import (
-	"fmt"
-	"github.com/deckarep/golang-set"
 	"strings"
 )
 
@@ -20,4 +18,9 @@ func CleanSpace(str string) string {
 //检查字符串中是否包含某个字符,支持单字符和词汇的检查
 func StrContains(str, obj string) bool {
 	return strings.Contains(str, obj)
+}
+
+//检查字符或字符串出现的次数
+func StrCount(str, obj string) int {
+	return strings.Count(str, obj)
 }
