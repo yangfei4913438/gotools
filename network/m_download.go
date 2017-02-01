@@ -57,6 +57,7 @@ func GoDownload(wg *sync.WaitGroup, download_path, download_url string) {
 	res, err := http.Get(download_url)
 	if err != nil {
 		fmt.Println("连接远程服务器时出错!" + err.Error())
+		os.Exit(1)
 	}
 
 	//获取下载文件的存放路径
@@ -66,6 +67,7 @@ func GoDownload(wg *sync.WaitGroup, download_path, download_url string) {
 	defer target_file.Close()
 	if err != nil {
 		fmt.Println("创建本地文件出错:" + err.Error())
+		os.Exit(1)
 	}
 	io.Copy(target_file, res.Body)
 
@@ -78,6 +80,7 @@ func GoInfo(wg *sync.WaitGroup, download_path, download_url string, start_time t
 	res, err := http.Get(download_url)
 	if err != nil {
 		fmt.Println("连接远程服务器时出错!" + err.Error())
+		os.Exit(1)
 	}
 
 	size, size_int := base.GetSize(res.ContentLength)
