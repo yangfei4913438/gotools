@@ -3,7 +3,7 @@
 # If you want Google's container you would reference google/golang
 # Read more about containers on our dev center
 # http://devcenter.wercker.com/docs/containers/index.html
-box: golang
+box: wercker/golang
 # This is the build pipeline. Pipelines are the core of wercker
 # Read more about pipelines on our dev center
 # http://devcenter.wercker.com/docs/pipelines/index.html
@@ -30,16 +30,18 @@ build:
     - script:
         name: go get
         code: |
-          go get
+          cd $WERCKER_SOURCE_DIR
+          go version
+          go get -t .
 
     # Build the project
     - script:
         name: go build
         code: |
-          go build ./...
+          go build .
 
     # Test the project
     - script:
         name: go test
         code: |
-          go test ./...
+          go test -v ./...
