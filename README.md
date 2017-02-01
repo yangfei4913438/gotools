@@ -1,5 +1,9 @@
 # Golang Tools
 
-#### 项目说明
-    本项目的设计初衷，是作为GO语言发开时的基础模块。
-    任何人都可以使用，欢迎大家一起来补充完善本项目:)
+[![wercker status](https://app.wercker.com/status/e6786be9980192c4906b1d20970aea59/s/master "wercker status")](https://app.wercker.com/project/byKey/e6786be9980192c4906b1d20970aea59)
+
+install: `go get github.com/yangfei4913438/gotools`
+
+Base Example: see test.go
+
+Info Example: Please be patient...
