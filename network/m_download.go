@@ -2,7 +2,7 @@ package network
 
 import (
 	"fmt"
-	"gotools/base"
+	"github.com/yangfei4913438/gotools/base"
 	"io"
 	"math"
 	"net/http"

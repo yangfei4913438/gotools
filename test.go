@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"gotools/base"
-	"gotools/network"
+	"github.com/yangfei4913438/gotools/base"
+	"github.com/yangfei4913438/gotools/network"
 )
 
 func main() {
