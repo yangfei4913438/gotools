@@ -3,7 +3,7 @@ package base
 import "github.com/astaxie/beego/logs"
 
 //WEB日志
-func HttpSetLog() *logs.BeeLogger {
+func SetLog() *logs.BeeLogger {
 	//日志模块初始化
 	log := logs.NewLogger()
 
