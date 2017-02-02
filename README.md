@@ -1,6 +1,4 @@
-# Golang Tools
-
-[![wercker status](https://app.wercker.com/status/49eb7e5141480529ed7d4e53fe13ab00/s/master "wercker status")](https://app.wercker.com/project/byKey/49eb7e5141480529ed7d4e53fe13ab00)
+# Golang Tools [![wercker status](https://app.wercker.com/status/49eb7e5141480529ed7d4e53fe13ab00/s/master "wercker status")](https://app.wercker.com/project/byKey/49eb7e5141480529ed7d4e53fe13ab00)
 
 The role of the project: as the basis of other golang project module.
 
