@@ -3,7 +3,9 @@
 The role of the project: as the basis of other golang project module.
 
 ## How to install
-    go get github.com/yangfei4913438/gotools
+Use `go get` to install or upgrade (`-u`) the `gotools` package.
+
+    go get -u github.com/yangfei4913438/gotools
 
 ## Usage
 Base Example: 
