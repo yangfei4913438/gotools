@@ -1,7 +1,2 @@
-gotools.iml
-gotools.ipr
-gotools.iws
-/math/math.iml
-/base/base.iml
-/network/network.iml
-/time/time.iml
+/client.go
+/main.go
