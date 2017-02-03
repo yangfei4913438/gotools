@@ -7,7 +7,7 @@ build:
         name: go get
         code: |
 #          cd $WERCKER_SOURCE_DIR
-#          go version
+           go version
 #          go get -t .
            go get
 
