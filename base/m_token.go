@@ -1,35 +1,19 @@
 package base
 
 import (
-	"crypto/md5"
-	"encoding/hex"
-	"math/rand"
-	"time"
+	"github.com/yangfei4913438/gotools/math"
 )
 
 func GetToken(length int, ismd5 bool) string {
 
-	src := [...]string{
-		"Q", "@", "8", "y", "%", "^", "5", "Z", "(", "G", "_", "O", "*",
-		"S", "-", "N", "<", "D", "{", "}", "[", "]", "h", ";", "W", ".",
-		"/", "|", ":", "1", "E", "L", "4", "&", "6", "7", "#", "9", "a",
-		"A", "b", "B", "~", "C", "d", ">", "e", "2", "f", "P", "g", ")",
-		"?", "H", "i", "X", "U", "J", "k", "r", "l", "3", "t", "M", "n",
-		"=", "o", "+", "p", "F", "q", "!", "K", "R", "s", "c", "m", "T",
-		"v", "j", "u", "V", "w", ",", "x", "I", "$", "Y", "z"}
-
 	res := ""
 
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	for i := 0; i < length; i++ {
-		n := r.Intn(len(src)) //取随机数
-		res += src[n]
+		res += math.RandStr()
 	}
 
 	if ismd5 {
-		h := md5.New()
-		h.Write([]byte(res))
-		return hex.EncodeToString(h.Sum(nil))
+		return StrMD5(res)
 	} else {
 		return res
 	}

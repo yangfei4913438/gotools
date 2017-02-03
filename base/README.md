@@ -8,3 +8,5 @@
 - m_uuid: 生成机器码
 - m_error: 自定义错误信息功能
 - m_log: beego的日志功能进行了定制
+- m_md5: 将字符串用MD5进行加密
+- m_token: 获取token字符串，可选长度、是否MD5加密
