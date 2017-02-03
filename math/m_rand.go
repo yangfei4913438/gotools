@@ -5,16 +5,10 @@ import (
 	"time"
 )
 
-//生成指定范围内的随机数【0到x】
+//生成指定范围内的随机数【0到x，不包含x】
 func RandInt(x int) int {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	return r.Intn(x)
-}
-
-//生成0-9之间的随机数
-func Rand09() int {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	return r.Intn(10)
 }
 
 //生成随机字符
