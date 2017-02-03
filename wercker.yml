@@ -6,21 +6,20 @@ build:
     - script:
         name: go get
         code: |
-           cd $WERCKER_SOURCE_DIR
-           go version
-#          go get -t .
-           go get
+          cd $WERCKER_SOURCE_DIR
+          go version
+          go get -t .
 
     # Build the project
     - script:
         name: go build
         code: |
-#          go build .
-           go build ./...
+#         go build .
+          go build ./...
 
     # Test the project
     - script:
         name: go test
         code: |
-#          go test -v ./...
-           go test ./...
+#         go test -v ./...
+          go test ./...
