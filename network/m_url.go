@@ -9,7 +9,11 @@ import (
 
 //检查网络状态,超时时间为5秒
 func UrlPing(url string) (string, error) {
-	_, err := net.DialTimeout("tcp", url, time.Second*5)
+	r, err := net.DialTimeout("tcp", url, time.Second*5)
+	if r != nil {
+		r.Close()
+	}
+
 	if err == nil {
 		res := "连接url(" + url + ")成功:)"
 		//网络正常,返回0
