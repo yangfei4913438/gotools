@@ -8,9 +8,5 @@ func IsToday(newtime string) bool {
 	new_time, _ := time.Parse("2006-01-02", newtime)
 	today, _ := time.Parse("2006-01-02", time.Now().Format("2006-01-02"))
 
-	if new_time.Unix() == today.Unix() {
-		return true
-	} else {
-		return false
-	}
+	return new_time.Unix() == today.Unix()
 }
