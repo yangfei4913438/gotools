@@ -79,23 +79,20 @@ func GetSize(obj int64) (string, int64) {
 
 //获取本地文件的大小,返回2个值,一个是带单位的字符串,一个是不带单位的字节
 func GetFileSize(file_addr string) (string, int64) {
-
-	_, err := os.Open(file_addr)
-	if err != nil && os.IsNotExist(err) {
-		return "0B", 0
-	} else {
-
+	if CheckIsExist(file_addr) {
 		file, err := os.Open(file_addr)
+		defer file.Close()
 		if err != nil {
 			fmt.Println("打开文件出错:" + err.Error())
 		}
-		defer file.Close()
 		f, err := file.Stat()
 		if err != nil {
-			fmt.Println("打开文件出错:" + err.Error())
+			fmt.Println("获取文件信息出错:" + err.Error())
 		}
 		r, i := GetSize(f.Size())
 		return r, i
+	} else {
+		return "0B", 0
 	}
 }
 
