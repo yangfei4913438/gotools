@@ -100,14 +100,17 @@ func GetFileSize(file_addr string) (string, int64) {
 }
 
 //检查路径是否存在。文件和目录都可以检查。
-func CheckIsExist(addr string) int {
-	_, err := os.Open(addr)
+func CheckIsExist(addr string) bool {
+	f, err := os.Open(addr)
+	if f != nil {
+		f.Close()
+	}
 	if err != nil && os.IsNotExist(err) {
 		//路径不存在
-		return 1
+		return false
 	} else {
 		//路径存在
-		return 0
+		return true
 	}
 }
 
