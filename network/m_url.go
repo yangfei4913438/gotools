@@ -8,6 +8,7 @@ import (
 )
 
 //检查网络状态,超时时间为5秒
+//这里需要加上端口,且不能添加如：http:// 这样的网络协议
 func UrlPing(url string) (string, error) {
 	r, err := net.DialTimeout("tcp", url, time.Second*5)
 	if r != nil {
@@ -25,7 +26,7 @@ func UrlPing(url string) (string, error) {
 	}
 }
 
-//使用GET方法获取url状态(限ip,对域名无效)
+//使用GET方法获取url状态, 需要完整url, 不需要端口
 func UrlStatus(url string) (bool, string, error) {
 	s, err := http.Get(url)
 	if err != nil {
