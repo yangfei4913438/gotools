@@ -11,6 +11,7 @@ import (
 //用于读取文件,一次性读取所有的。这个函数用于读取存储提示信息等小段信息的操作。
 func ReadAll(filePth string) ([]byte, error) {
 	f, err := os.Open(filePth)
+	defer f.Close()
 	if err != nil {
 		return nil, err
 	}
