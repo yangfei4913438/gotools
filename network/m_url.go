@@ -26,17 +26,16 @@ func UrlPing(url string) (string, error) {
 }
 
 //使用GET方法获取url状态(限ip,对域名无效)
-//1表示异常，0表示正常。用于正常状态下的数值判断
-func UrlStatus(url string) (int, string, error) {
+func UrlStatus(url string) (bool, string, error) {
 	s, err := http.Get(url)
 	if err != nil {
-		return 1, "", err
+		return false, "", err
 	} else {
 		if s.StatusCode == 200 {
-			return 0, strconv.Itoa(s.StatusCode), nil
+			return true, strconv.Itoa(s.StatusCode), nil
 		} else {
 			//只允许200，其他状态值都是异常状态
-			return 1, strconv.Itoa(s.StatusCode), nil
+			return false, strconv.Itoa(s.StatusCode), nil
 		}
 	}
 }
