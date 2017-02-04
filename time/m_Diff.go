@@ -10,10 +10,10 @@ func TimeDiff(oldTime, newTime string) int {
 	new_time, _ := time.Parse("2006-01-02 15:04:05", newTime)
 
 	if old_time.Unix() >= new_time.Unix() {
-		times := old_time.Sub(new_time).Seconds()
-		return int(times)
+		subTimes := old_time.Sub(new_time).Seconds()
+		return int(subTimes)
 	} else {
-		times := new_time.Sub(old_time).Seconds()
-		return int(times)
+		subTimes := new_time.Sub(old_time).Seconds()
+		return int(subTimes)
 	}
 }
