@@ -6,7 +6,7 @@ import (
 	"github.com/yangfei4913438/gotools/network"
 )
 
-func main() {
+func main1() {
 	sh_out, sh_err := base.ShExec("", "ls", "-l")
 	if sh_err != nil {
 		fmt.Println("error: ", sh_err.Error())
