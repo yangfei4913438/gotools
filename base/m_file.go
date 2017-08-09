@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
 //用于读取文件,一次性读取所有的。这个函数用于读取存储提示信息等小段信息的操作。
@@ -117,4 +118,13 @@ func ClearDir(dir_path string) (string, error) {
 		out, err := ShExec("", "mkdir", "-p", dir_path)
 		return out, err
 	}
+}
+
+//获取文件的上级目录绝对路径
+func GetRootPath() string {
+	FileDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		panic(err)
+	}
+	return FileDir + "/"
 }
