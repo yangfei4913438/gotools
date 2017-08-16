@@ -46,10 +46,18 @@ func OpenMysql() (DBmysql *sql.DB) {
 		beego.Critical("Connect to Mysql, Error: " + err.Error())
 		panic("Connect to Mysql, Error: " + err.Error())
 	}
+
 	DBmysql.SetConnMaxLifetime(time.Duration(mysql_max_life_time) * time.Second)
 	DBmysql.SetMaxOpenConns(mysql_max_open_conns)
 	DBmysql.SetMaxIdleConns(mysql_max_idle_conns)
-	beego.Info("Connected to mysql successful!")
+
+	if err := DBmysql.Ping(); err != nil {
+		beego.Critical("Try to ping mysql, Error: " + err.Error())
+		panic("Try to ping mysql, Error: " + err.Error())
+	} else {
+		beego.Info("Connected to mysql successful!")
+	}
+
 	return DBmysql
 }
 
