@@ -1,6 +1,9 @@
 package time
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 func TimeDiff(oldTime, newTime string) int {
 	//传入的时间，必须是规定的格式 "2006-01-02 15:04:05"
@@ -19,7 +22,16 @@ func TimeDiff(oldTime, newTime string) int {
 }
 
 //参数：时间戳，时区(-12到12)。获取相应时区的时间
-func GetTimeZoneTime(timestamp int64 ,value int) time.Time {
+func GetTimeZoneTime(timestamp int64, value int) time.Time {
 	//需要转换成UTC时间，就是0时区的时间
-	return time.Unix(timestamp,0).UTC().Add(time.Duration(value)*time.Hour)
+	return time.Unix(timestamp, 0).UTC().Add(time.Duration(value) * time.Hour)
+}
+
+//获取时区显示字符串
+func GetTimeZone(value int) string {
+	if value >= 0 {
+		return "(GMT +0" + strconv.Itoa(value) + ":00)"
+	} else {
+		return "(GMT -0" + strconv.Itoa(value) + ":00)"
+	}
 }
