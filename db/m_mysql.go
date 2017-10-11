@@ -22,54 +22,67 @@ mysql_max_open_conns = 1000
 mysql_max_idle_conns = 20
 */
 
-func OpenMysql() (DBmysql *sql.DB) {
+func init() {
+	InitMysql()
+}
+
+type mysqlType struct {
+	DB *sql.DB
+}
+
+// mysql对外接口
+var MysqlDB *mysqlType
+
+func InitMysql() {
 	//读取MySQL配置
-	var mysql_user = beego.AppConfig.String("mysql_user")
-	var mysql_password = beego.AppConfig.String("mysql_password")
-	var mysql_net = beego.AppConfig.String("mysql_net")
-	var mysql_host = beego.AppConfig.String("mysql_host")
-	var mysql_port = beego.AppConfig.String("mysql_port")
-	var mysql_db = beego.AppConfig.String("mysql_db")
-	var mysql_charset = beego.AppConfig.String("mysql_charset")
-	var mysql_max_life_time = beego.AppConfig.DefaultInt("mysql_max_life_time", 300)
-	var mysql_max_open_conns = beego.AppConfig.DefaultInt("mysql_max_open_conns", 1000)
-	var mysql_max_idle_conns = beego.AppConfig.DefaultInt("mysql_max_idle_conns", 20)
+	var mysqlUser = beego.AppConfig.String("mysql_user")
+	var mysqlPassword = beego.AppConfig.String("mysql_password")
+	var mysqlNet = beego.AppConfig.String("mysql_net")
+	var mysqlHost = beego.AppConfig.String("mysql_host")
+	var mysqlPort = beego.AppConfig.String("mysql_port")
+	var mysqlDb = beego.AppConfig.String("mysql_db")
+	var mysqlCharset = beego.AppConfig.String("mysql_charset")
+	var mysqlMaxLifeTime = beego.AppConfig.DefaultInt("mysql_max_life_time", 300)
+	var mysqlMaxOpenConns = beego.AppConfig.DefaultInt("mysql_max_open_conns", 1000)
+	var mysqlMaxIdleConns = beego.AppConfig.DefaultInt("mysql_max_idle_conns", 20)
 
 	//拼接成MySQL连接串
-	var mysql_source string
-	mysql_source = mysql_user + ":" + mysql_password + "@" + mysql_net + "(" + mysql_host + ":" + mysql_port + ")"
-	mysql_source += "/" + mysql_db + "?" + "charset=" + mysql_charset
+	var mysqlSource string
+	mysqlSource = mysqlUser + ":" + mysqlPassword + "@" + mysqlNet + "(" + mysqlHost + ":" + mysqlPort + ")"
+	mysqlSource += "/" + mysqlDb + "?" + "charset=" + mysqlCharset
 
 	var err error
-	DBmysql, err = sql.Open("mysql", mysql_source)
+	openMysql, err := sql.Open("mysql", mysqlSource)
 	if err != nil {
 		beego.Critical("Connect to Mysql, Error: " + err.Error())
 		panic("Connect to Mysql, Error: " + err.Error())
 	}
 
-	DBmysql.SetConnMaxLifetime(time.Duration(mysql_max_life_time) * time.Second)
-	DBmysql.SetMaxOpenConns(mysql_max_open_conns)
-	DBmysql.SetMaxIdleConns(mysql_max_idle_conns)
+	MysqlDB = &mysqlType{openMysql}
 
-	if err := DBmysql.Ping(); err != nil {
+	MysqlDB.DB.SetConnMaxLifetime(time.Duration(mysqlMaxLifeTime) * time.Second)
+	MysqlDB.DB.SetMaxOpenConns(mysqlMaxOpenConns)
+	MysqlDB.DB.SetMaxIdleConns(mysqlMaxIdleConns)
+
+	if err := MysqlDB.DB.Ping(); err != nil {
 		beego.Critical("Try to ping mysql, Error: " + err.Error())
 		panic("Try to ping mysql, Error: " + err.Error())
 	} else {
 		beego.Info("Connected to mysql successful!")
 	}
 
-	return DBmysql
 }
 
-func CloseMysql(DBmysql *sql.DB) {
-	DBmysql.Close()
+//关闭MySQL连接
+func (mt *mysqlType) CloseMysql() {
+	mt.DB.Close()
 	beego.Info("[db closed] mysql")
 }
 
 //数据库查询
-func DoQuery(sql string, DBmysql *sql.DB) (results map[int]map[int]string, err error) {
+func (mt *mysqlType) DoQuery(sql string) (results map[int]map[int]string, err error) {
 	beego.Trace("[sql]: ", sql)
-	rows, err := DBmysql.Query(sql)
+	rows, err := mt.DB.Query(sql)
 	if err != nil {
 		beego.Error(err.Error())
 		return nil, err
@@ -99,9 +112,9 @@ func DoQuery(sql string, DBmysql *sql.DB) (results map[int]map[int]string, err e
 }
 
 //单一sql执行
-func DoExec(sql string, DBmysql *sql.DB) (bool, error) {
+func (mt *mysqlType) DoExec(sql string) (bool, error) {
 	beego.Trace("[sql]: ", sql)
-	_, err := DBmysql.Exec(sql)
+	_, err := mt.DB.Exec(sql)
 	if err != nil {
 		beego.Error(err.Error())
 		return false, err
@@ -110,8 +123,8 @@ func DoExec(sql string, DBmysql *sql.DB) (bool, error) {
 }
 
 // DoExecBatch 开启事务，执行批处理
-func DoExecBatch(sqls []string, DBmysql *sql.DB) (bool, error) {
-	tx, errBegin := DBmysql.Begin()
+func (mt *mysqlType) DoExecBatch(sqls []string) (bool, error) {
+	tx, errBegin := mt.DB.Begin()
 	if errBegin != nil {
 		beego.Error(errBegin.Error())
 		return false, errBegin
