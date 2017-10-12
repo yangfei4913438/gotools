@@ -23,7 +23,7 @@ mysql_max_idle_conns = 20
 */
 
 func init() {
-	InitMysql()
+	initMysql()
 }
 
 type mysqlType struct {
@@ -33,7 +33,7 @@ type mysqlType struct {
 // mysql对外接口
 var MysqlDB *mysqlType
 
-func InitMysql() {
+func initMysql() {
 	//读取MySQL配置
 	var mysqlUser = beego.AppConfig.String("mysql_user")
 	var mysqlPassword = beego.AppConfig.String("mysql_password")
