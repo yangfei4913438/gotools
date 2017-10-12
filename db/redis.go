@@ -20,10 +20,10 @@ redis.idletimeout=600
 var RedisDB redis.RedisCache
 
 func init() {
-	InitRedis()
+	initRedis()
 }
 
-func InitRedis() {
+func initRedis() {
 	hosts := beego.AppConfig.String("redis.host")
 	password := beego.AppConfig.DefaultString("redis.password", "")
 	database := beego.AppConfig.DefaultInt("redis.db", 0)
