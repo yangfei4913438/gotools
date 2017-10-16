@@ -70,7 +70,7 @@ func (api *API) SelectMysql() {
 post: http://127.0.0.1:9004/pay_private/api/v1/select_mysql
 提交内容(JSON):
 {
-	"table_name": "1",
+	"table_name": "",
 	"fields": ["id","name"],
 	"sql": "select id, name from user where name = 'william'"
 }
