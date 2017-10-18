@@ -60,8 +60,11 @@ func initMysql() {
 
 	MysqlDB = &mysqlType{openMysql}
 
+	//SetConnMaxLifetime连接的最大空闲时间(可选)
 	MysqlDB.DB.SetConnMaxLifetime(time.Duration(mysqlMaxLifeTime) * time.Second)
+	//SetMaxOpenConns用于设置最大打开的连接数，默认值为0表示不限制。
 	MysqlDB.DB.SetMaxOpenConns(mysqlMaxOpenConns)
+	//SetMaxIdleConns用于设置闲置的连接数。
 	MysqlDB.DB.SetMaxIdleConns(mysqlMaxIdleConns)
 
 	if err := MysqlDB.DB.Ping(); err != nil {
