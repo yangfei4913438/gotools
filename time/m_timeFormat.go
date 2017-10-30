@@ -13,7 +13,7 @@ func GetTimeZoneTime(timestamp int64, value int) time.Time {
 }
 
 //时间戳格式化为字符串，这里默认为东八区的时间戳
-func FormartTime(t int64) string {
+func FormatUnixTime(t int64) string {
 	//默认是东八区的时间戳
 	return time.Unix(t, 0).UTC().Add(time.Hour * 8).Format("2006-01-02 15:04:05")
 }
