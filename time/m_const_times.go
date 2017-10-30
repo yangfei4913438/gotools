@@ -16,7 +16,8 @@ const (
 	OneYear   = OneDay * 365
 )
 
-func OneMonth(year int, month int) (time.Duration, error) {
+//传入年份，月份，获取当月有多少天
+func OneMonth(year int, month int) (int, time.Duration, error) {
 	switch month {
 	case 1:
 		fallthrough
@@ -31,14 +32,14 @@ func OneMonth(year int, month int) (time.Duration, error) {
 	case 10:
 		fallthrough
 	case 12:
-		return OneDay * 31, nil
+		return 31, OneDay * 31, nil
 	case 2:
 		if (year % 4) != 0 {
 			//年份不能被4整除，就是平年，二月份为28天
-			return OneDay * 28, nil
+			return 28, OneDay * 28, nil
 		} else {
 			// 年份可以被4整除，就是闰年，二月份为29天
-			return OneDay * 29, nil
+			return 29, OneDay * 29, nil
 		}
 	case 4:
 		fallthrough
@@ -47,8 +48,8 @@ func OneMonth(year int, month int) (time.Duration, error) {
 	case 9:
 		fallthrough
 	case 11:
-		return OneDay * 30, nil
+		return 30, OneDay * 30, nil
 	default:
-		return ZeroTime, errors.New("不是正常的月份值")
+		return 0, ZeroTime, errors.New("不是正常的月份值")
 	}
 }
