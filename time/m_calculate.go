@@ -51,3 +51,8 @@ func AddMonth(basetime int64, md int) time.Time {
 
 	return new_time
 }
+
+//增加天数
+func AddDay(baseTime int64, days int) time.Time {
+	return time.Unix(baseTime, 0).Add(OneDay * time.Duration(days))
+}
