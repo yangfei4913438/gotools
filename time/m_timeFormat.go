@@ -12,6 +12,12 @@ func GetTimeZoneTime(timestamp int64, value int) time.Time {
 	return time.Unix(timestamp, 0).UTC().Add(time.Duration(value) * time.Hour)
 }
 
+//时间戳格式化为字符串，这里默认为东八区的时间戳
+func FormartTime(t int64) string {
+	//默认是东八区的时间戳
+	return time.Unix(t, 0).UTC().Add(time.Duration(8)).Format("2006-01-02 15:04:05")
+}
+
 //获取时区显示字符串
 func GetTimeZone(value int) string {
 	if value >= 0 {
