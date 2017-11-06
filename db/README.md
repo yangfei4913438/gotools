@@ -182,7 +182,7 @@ func SelectMysql(sql string) (*[]User, error) {
 		return nil, err
 	}
 
-	if err := json.Unmarshal(res, &u); err != nil {
+	if err := json.Unmarshal(*res, &u); err != nil {
 		beego.Error(err)
 		return nil, err
 	}

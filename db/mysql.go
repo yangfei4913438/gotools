@@ -83,9 +83,9 @@ func (mt *mysqlType) CloseMysql() {
 	beego.Info("[db closed] mysql")
 }
 
-//数据库查询, 返回的结果是JSON序列化后的对象，需要通过JSON反序列化，然后用结构体接收查询到的对象。
+//数据库查询, 返回的结果是JSON序列化后的对象(指针)，需要通过JSON反序列化，然后用结构体接收查询到的对象。
 //注意：当前版本，只能用string接受结构体，然后再类型转换处理，其他类型会因为类型不匹配出错！
-func (mt *mysqlType) DoQuery(sql string) ([]byte, error) {
+func (mt *mysqlType) DoQuery(sql string) (*[]byte, error) {
 	beego.Trace("[sql]: ", sql)
 	rows, err := mt.DB.Query(sql)
 	if err != nil {
@@ -120,7 +120,7 @@ func (mt *mysqlType) DoQuery(sql string) ([]byte, error) {
 		beego.Error(err.Error())
 		return nil, err
 	}
-	return send, nil
+	return &send, nil
 }
 
 //单一sql执行
