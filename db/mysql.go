@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"encoding/json"
 	"github.com/astaxie/beego"
 	_ "github.com/go-sql-driver/mysql"
 	"time"
@@ -82,8 +83,9 @@ func (mt *mysqlType) CloseMysql() {
 	beego.Info("[db closed] mysql")
 }
 
-//数据库查询
-func (mt *mysqlType) DoQuery(sql string) (results map[int]map[int]string, err error) {
+//数据库查询, 返回的结果是JSON序列化后的对象，需要通过JSON反序列化，然后用结构体接收查询到的对象。
+//注意：当前版本，只能用string接受结构体，然后再类型转换处理，其他类型会因为类型不匹配出错！
+func (mt *mysqlType) DoQuery(sql string) ([]byte, error) {
 	beego.Trace("[sql]: ", sql)
 	rows, err := mt.DB.Query(sql)
 	if err != nil {
@@ -96,22 +98,29 @@ func (mt *mysqlType) DoQuery(sql string) (results map[int]map[int]string, err er
 	for i := range values {
 		scans[i] = &values[i]
 	}
-	results = make(map[int]map[int]string)
+	//因为数据库中的记录不止一条，所以用切片形式记录查询出来的对象
+	var results []map[string]string
 	i := 0
 	for rows.Next() {
 		if err = rows.Scan(scans...); err != nil {
 			beego.Error(err.Error())
 			return nil, err
 		}
-		row := make(map[int]string) //每行数据
-		for k, v := range values {  //每行数据是放在values里面，现在把它挪到row里
-			row[k] = string(v)
+		row := make(map[string]string) //每行数据
+		for k, v := range values {     //每行数据是放在values里面，现在把它挪到row里
+			row[cols[k]] = string(v) //字段和值匹配起来
 		}
-		results[i] = row //装入结果集中
+		results = append(results, row) //装入结果集中
 		i++
 	}
 	rows.Close()
-	return results, nil
+
+	send, err := json.Marshal(results)
+	if err != nil {
+		beego.Error(err.Error())
+		return nil, err
+	}
+	return send, nil
 }
 
 //单一sql执行
