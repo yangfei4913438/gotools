@@ -56,3 +56,18 @@ func AddMonth(basetime int64, md int) time.Time {
 func AddDay(baseTime int64, days int) time.Time {
 	return time.Unix(baseTime, 0).Add(OneDay * time.Duration(days))
 }
+
+//增加小时
+func AddHour(baseTime int64, hours int) time.Time {
+	return time.Unix(baseTime, 0).Add(OneHour * time.Duration(hours))
+}
+
+//增加分钟
+func AddMinute(baseTime int64, minutes int) time.Time {
+	return time.Unix(baseTime, 0).Add(OneMinute * time.Duration(minutes))
+}
+
+//增加秒
+func AddSecond(baseTime int64, second int) time.Time {
+	return time.Unix(baseTime, 0).Add(OneSecond * time.Duration(second))
+}
