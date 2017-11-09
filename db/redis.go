@@ -37,6 +37,6 @@ func initRedis() {
 	if err := RedisDB.CheckRedis(); err != nil {
 		panic("Redis Server:" + hosts + " Connect failed: " + err.Error() + "!")
 	} else {
-		beego.Info("Redis Server:" + hosts + " Connected!")
+		beego.Info("Connect Redis Server(" + hosts + ") to successful!")
 	}
 }

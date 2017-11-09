@@ -26,7 +26,7 @@ func initMongoDB() {
 	if err != nil {
 		panic("MongoDB Server:" + mgo_url + " Connect failed: " + err.Error() + "!")
 	} else {
-		beego.Info("MongoDB Server:" + mgo_url + " Connected!")
+		beego.Info("Connect MongoDB Server(" + mgo_url + ") to successful!")
 	}
 
 	MongoDB.SetMode(mgo.Monotonic, true)

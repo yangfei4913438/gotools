@@ -72,7 +72,7 @@ func initMysql() {
 		beego.Critical("Try to ping mysql, Error: " + err.Error())
 		panic("Try to ping mysql, Error: " + err.Error())
 	} else {
-		beego.Info("Connected to mysql successful!")
+		beego.Info("Connect Mysql Server(" + mysqlHost + ":" + mysqlPort + ") to successful!")
 	}
 
 }
