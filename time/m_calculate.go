@@ -71,3 +71,8 @@ func AddMinute(baseTime int64, minutes int) time.Time {
 func AddSecond(baseTime int64, second int) time.Time {
 	return time.Unix(baseTime, 0).Add(OneSecond * time.Duration(second))
 }
+
+//向前取整小时【更大的时间单位，取整不能这样操作!】
+func TrucHour(baseTime int64) time.Time {
+	return time.Unix(baseTime, 0).Truncate(OneHour)
+}
