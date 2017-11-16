@@ -1,201 +1,140 @@
 ### beego使用mysql模块
 
-##### 1、路由
-
 ```golang
-//api路由,一级
-ns := beego.NewNamespace("/pay_private",
-    //api路由,二级
-    beego.NSNamespace("/api",
-        //api路由,三级
-        beego.NSNamespace(
-            "/v1",
-            //测试接口
-            beego.NSRouter("/default", &controllers.API{}, "get:Welcome"),
-
-            //执行sql
-            beego.NSRouter("/exec_mysql", &controllers.API{}, "post:ExecMysql"),
-
-            //批量执行sql
-            beego.NSRouter("/batch_mysql", &controllers.API{}, "post:BatchMysql"),
-
-            //查询MySQL接口
-            beego.NSRouter("/select_mysql", &controllers.API{}, "post:SelectMysql"),
-        ),
-    ),
-)
-//注册自定义namespace
-beego.AddNamespace(ns)
-```
-
-##### 2、控制器
-
-```golang
-package controllers
+package main
 
 import (
-	"xxxxxx/models"
 	"encoding/json"
 	"github.com/astaxie/beego"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
+	"strconv"
+	"time"
 )
 
-func (api *API) SelectMysql() {
-	var receive string
-	var send interface{}
-
-	beego.Notice("SelectMysql，收到的数据：" + string(api.Ctx.Input.RequestBody))
-
-	if err := json.Unmarshal(api.Ctx.Input.RequestBody, &receive); err != nil {
-		beego.Error(err)
-		//自定义HTTP状态码
-		api.Ctx.ResponseWriter.WriteHeader(200)
-		send = &SendMessage{false, "获取JSON数据出错: " + err.Error()}
-	} else {
-		//流程处理
-		result, err := models.SelectMysql(receive)
-		if err != nil {
-			beego.Error("查询mysql出错: " + err.Error())
-			//自定义HTTP状态码
-			api.Ctx.ResponseWriter.WriteHeader(500)
-			send = &SendMessage{false, "查询mysql出错: " + err.Error()}
-		} else {
-			//自定义HTTP状态码
-			api.Ctx.ResponseWriter.WriteHeader(200)
-			send = result
-		}
-	}
-	//定义返回JSON
-	api.Data["json"] = send
-
-	//返回数据
-	api.ServeJSON()
-
+// 用户结构体。数据类型是指针，可以防止查询出来的对象是null(也就是go里面的nil)
+type Users struct {
+	Id   *int    `db:"id"`
+	Name *string `db:"name"`
+	Age  *int    `db:"age"`
+	City *string `db:"city"`
 }
 
-/*
-post: http://127.0.0.1:9004/pay_private/api/v1/select_mysql
-提交内容:
-"select id, name from user where name = 'william'"
-*/
-
-func (api *API) ExecMysql() {
-	var receive string
-	var send interface{}
-
-	beego.Notice("ExecMysql，收到的数据：" + string(api.Ctx.Input.RequestBody))
-
-	if err := json.Unmarshal(api.Ctx.Input.RequestBody, &receive); err != nil {
-		beego.Error(err)
-		api.Ctx.ResponseWriter.WriteHeader(500)
-		send = &SendMessage{false, "获取JSON数据出错: " + err.Error()}
-	} else {
-		//流程处理
-		result, err := models.ExecMysql(&receive)
-		if err != nil {
-			beego.Error("执行SQL出错: " + err.Error())
-			api.Ctx.ResponseWriter.WriteHeader(500)
-			send = &SendMessage{false, "执行SQL出错: " + err.Error()}
-		} else {
-			api.Ctx.ResponseWriter.WriteHeader(200)
-			send = result
-		}
-	}
-	//定义返回JSON
-	api.Data["json"] = send
-
-	//返回数据
-	api.ServeJSON()
+type mysqlType struct {
+	*sqlx.DB
 }
 
-/*
-post: http://127.0.0.1:9004/pay_private/api/v1/exec_mysql
-提交内容:
-"insert into user (name, age) values ('william5', 25)"
-*/
+var MysqlDB *mysqlType
 
-func (api *API) BatchMysql() {
-	var receive []string
-	var send interface{}
+func init() {
+	//读取MySQL配置
+	var mysqlUser = "root"
+	var mysqlPassword = "111111"
+	var mysqlNet = "tcp"
+	var mysqlHost = "10.0.0.252"
+	var mysqlPort = "3306"
+	var mysqlDb = "cydex"
+	var mysqlCharset = "utf8"
+	var mysqlMaxLifeTime = 300
+	var mysqlMaxOpenConns = 1000
+	var mysqlMaxIdleConns = 20
 
-	beego.Notice("BatchMysql，收到的数据：" + string(api.Ctx.Input.RequestBody))
+	//拼接成MySQL连接串
+	var mysqlSource string
+	mysqlSource = mysqlUser + ":" + mysqlPassword + "@" + mysqlNet + "(" + mysqlHost + ":" + mysqlPort + ")"
+	mysqlSource += "/" + mysqlDb + "?" + "charset=" + mysqlCharset
 
-	if err := json.Unmarshal(api.Ctx.Input.RequestBody, &receive); err != nil {
-		beego.Error(err)
-		api.Ctx.ResponseWriter.WriteHeader(500)
-		send = &SendMessage{false, "获取JSON数据出错: " + err.Error()}
-	} else {
-		//流程处理
-		result, err := models.BatchMysql(&receive)
-		if err != nil {
-			beego.Error("批量执行SQL出错: " + err.Error())
-			api.Ctx.ResponseWriter.WriteHeader(500)
-			send = &SendMessage{false, "批量执行SQL出错: " + err.Error()}
-		} else {
-			api.Ctx.ResponseWriter.WriteHeader(200)
-			send = result
-		}
+	var err error
+	db, err := sqlx.Connect("mysql", mysqlSource)
+	if err != nil {
+		beego.Critical("Connect to Mysql, Error: " + err.Error())
+		panic("Connect to Mysql, Error: " + err.Error())
 	}
 
-	//定义返回JSON
-	api.Data["json"] = send
+	//实例化一个mysql连接对象
+	MysqlDB = &mysqlType{db}
 
-	//返回数据
-	api.ServeJSON()
+	//SetConnMaxLifetime连接的最大空闲时间(可选)
+	MysqlDB.SetConnMaxLifetime(time.Duration(mysqlMaxLifeTime) * time.Second)
+	//SetMaxOpenConns用于设置最大打开的连接数，默认值为0表示不限制。
+	MysqlDB.SetMaxOpenConns(mysqlMaxOpenConns)
+	//SetMaxIdleConns用于设置闲置的连接数。
+	MysqlDB.SetMaxIdleConns(mysqlMaxIdleConns)
+
+	if err := MysqlDB.Ping(); err != nil {
+		beego.Critical("Attempt to connect to MySQL failed, Error: " + err.Error())
+		panic("Attempt to connect to MySQL failed, Error: " + err.Error())
+	} else {
+		beego.Info("Connect Mysql Server(" + mysqlHost + ":" + mysqlPort + ") to successful!")
+	}
+
 }
 
-/*
-post: http://127.0.0.1:9004/pay_private/api/v1/batch_mysql
-提交内容(JSON):
-[
- "insert into user (name, age) values ('william3', 23)",
- "insert into user (name, age) values ('william4', 24)"
-]
-*/
+func main() {
+	var u Users
 
-##### 3、模块
-
-```golang
-package models
-
-import (
-	"xxxxxx/db"
-	"encoding/json"
-    "github.com/astaxie/beego"
-)
-
-//接收的结构体，必须都是string类型，接受完成后，再进行类型转换
-type User struct {
-	Test       string `json:"test"`
-	Age        string `json:"age"`
-	Id         string `json:"id"`
-	Money      string `json:"money"`
-	Name       string `json:"name"`
-	Updatetime string `json:"updatetime"`
-}
-
-func SelectMysql(sql string) (*[]User, error) {
-	var u []User
-
-	res, err := db.MysqlDB.DoQuery(sql)
+	err := MysqlDB.Get(&u, "select * from users where id=?", 1)
 	if err != nil {
 		beego.Error(err)
-		return nil, err
 	}
-
-	if err := json.Unmarshal(*res, &u); err != nil {
+	u_str, err := json.Marshal(u)
+	if err != nil {
 		beego.Error(err)
-		return nil, err
+	}
+	beego.Notice("单行查询:", string(u_str))
+
+	var us []Users
+	err = MysqlDB.Select(&us, "select * from users where id in (?,?,?)", 1, 2, 3)
+	if err != nil {
+		beego.Error(err)
+	}
+	for k, v := range us {
+		vs, err := json.Marshal(v)
+		if err != nil {
+			beego.Error(err)
+		}
+		beego.Notice("多行查询:", "[第", k+1, "行]", string(vs))
 	}
 
-	return &u, nil
+	isql := "insert into users (name,age,city) values("
+	isql += "'LiLei',"
+	isql += IntToStr(20) + ","
+	isql += "'NanJing')"
+
+	beego.Notice("[执行sql]:", isql)
+	_, err = MysqlDB.Exec(isql)
+	if err != nil {
+		beego.Error(err)
+	}
+
+	var users []Users
+	err = MysqlDB.Select(&users, "select * from users")
+	if err != nil {
+		beego.Error(err)
+	}
+	for k, v := range users {
+		vs, err := json.Marshal(v)
+		if err != nil {
+			beego.Error(err)
+		}
+		beego.Notice("多行查询:", "[第", k+1, "行]", string(vs))
+	}
 }
 
-func ExecMysql(sql *string) (bool, error) {
-	return db.MysqlDB.DoExec(*sql)
+func IntToStr(x int) string {
+	return strconv.Itoa(x)
 }
 
-func BatchMysql(sqls *[]string) (bool, error) {
-	return db.MysqlDB.DoExecBatch(*sqls)
-}
+```
 
+#### 执行输出
+```shell
+2017/11/16 20:59:30 [I] Connect Mysql Server(10.0.0.252:3306) to successful!
+2017/11/16 20:59:30 [N] 单行查询: {"Id":1,"Name":"tom","Age":19,"City":"beijing"}
+2017/11/16 20:59:30 [N] 多行查询: [第 1 行] {"Id":1,"Name":"tom","Age":19,"City":"beijing"}
+2017/11/16 20:59:30 [N] 多行查询: [第 2 行] {"Id":2,"Name":"bill","Age":18,"City":"shanghai"}
+2017/11/16 20:59:30 [N] [执行sql]: insert into users (name,age,city) values('LiLei',20,'NanJing')
+2017/11/16 20:59:30 [N] 多行查询: [第 1 行] {"Id":1,"Name":"tom","Age":19,"City":"beijing"}
+2017/11/16 20:59:30 [N] 多行查询: [第 2 行] {"Id":2,"Name":"bill","Age":18,"City":"shanghai"}
+2017/11/16 20:59:30 [N] 多行查询: [第 3 行] {"Id":3,"Name":"LiLei","Age":20,"City":"NanJing"}
 ```
