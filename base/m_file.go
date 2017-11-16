@@ -66,7 +66,7 @@ func Readline(file_path string) ([]string, error) {
 }
 
 //获取文件大小的精确值
-func GetSize(obj int64) (string, int64) {
+func GetSize(obj int64) string {
 	var res string
 	if obj < 1024 {
 		res = Int64ToStr(obj) + "B"
@@ -75,7 +75,7 @@ func GetSize(obj int64) (string, int64) {
 	} else {
 		res = Float64ToStr(float64(obj)/1024/1024) + "M"
 	}
-	return res, obj
+	return res
 }
 
 //获取本地文件的大小,返回2个值,一个是带单位的字符串,一个是不带单位的字节
@@ -90,8 +90,8 @@ func GetFileSize(file_addr string) (string, int64) {
 		if err != nil {
 			fmt.Println("获取文件信息出错:" + err.Error())
 		}
-		r, i := GetSize(f.Size())
-		return r, i
+		r := GetSize(f.Size())
+		return r, f.Size()
 	} else {
 		return "0B", 0
 	}
