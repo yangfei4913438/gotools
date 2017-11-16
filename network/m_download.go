@@ -51,7 +51,7 @@ func GetElapsedTimeString(all_time int) string {
 	return elapsed_time
 }
 
-// 计算平均速度
+// 计算平均速度, 文件大小的单位是字节，总时间的单位是秒
 func GetAvgStr(file_size int64, all_time int) string {
 	var avg_str string
 
