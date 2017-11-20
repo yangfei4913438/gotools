@@ -78,3 +78,27 @@ func Test_StrToInt64(t *testing.T) {
 		t.Log("change string type to int64, check ok!")
 	}
 }
+
+func Test_Float64ToStr(t *testing.T) {
+	x := float64(3.1415926)
+	y := Float64ToStr(x)
+	if y != "3.14" {
+		t.Error("change float64 type to string, check error! right result is '3.14', but result is:", y)
+	} else {
+		t.Log("change float64 type to string, check ok!")
+	}
+}
+
+func Test_StrToFloat64(t *testing.T) {
+	x := "3.1415926"
+	y, err := StrToFloat64(x)
+	if err != nil {
+		t.Error("change string type to float64, found error:", err)
+	}
+
+	if y != float64(3.1415926) {
+		t.Error("change string type to float64, check error! right result is 3.1415926, but result is:", y)
+	} else {
+		t.Log("change string type to float64, check ok!")
+	}
+}

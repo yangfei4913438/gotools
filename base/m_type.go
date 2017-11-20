@@ -24,6 +24,6 @@ func Float64ToStr(x float64) string {
 	return strconv.FormatFloat(x, 'f', 2, 64)
 }
 
-func Float32ToStr(x float64) string {
-	return strconv.FormatFloat(x, 'f', 2, 32)
+func StrToFloat64(x string) (float64, error) {
+	return strconv.ParseFloat(x, 64)
 }
