@@ -18,14 +18,8 @@ build:
           go get -v github.com/imroc/req
           go get -t -v .
 
-    # Build the project
-#    - script:
-#        name: go build
-#        code: |
-#          go build -v ./...
-
     # Test the project
     - script:
         name: go test
         code: |
-          go test -v ./...
+          go test -v .
