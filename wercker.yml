@@ -16,7 +16,6 @@ build:
           go get -v github.com/jmoiron/sqlx
           go get -v github.com/yangfei4913438/redis-full
           go get -v github.com/imroc/req
-          go get -t -v .
 
     # Test the project
     - script:
