@@ -8,6 +8,14 @@ build:
         code: |
           cd $WERCKER_SOURCE_DIR
           go version
+          go get -t github.com/codeskyblue/go-sh
+          go get -t github.com/nu7hatch/gouuid
+          go get -t github.com/astaxie/beego
+          go get -t gopkg.in/mgo.v2
+          go get -t github.com/go-sql-driver/mysql
+          go get -t github.com/jmoiron/sqlx
+          go get -t github.com/yangfei4913438/redis-full
+          go get -t github.com/imroc/req
           go get -t .
 
     # Build the project
@@ -20,4 +28,4 @@ build:
     - script:
         name: go test
         code: |
-          go test .
+          go test -v ./...
