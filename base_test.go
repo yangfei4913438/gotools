@@ -15,5 +15,20 @@ func Test_CustomError(t *testing.T) {
 
 	if reflect.TypeOf(x) != reflect.TypeOf(check) {
 		t.Error("custom error type, check error!")
+	} else {
+		t.Log("custom error type, check ok!")
 	}
 }
+
+func Test_Splitstr(t *testing.T) {
+	x := "start_end"
+	
+	y := base.Splitstr(x, 1, 3)
+	
+	if y != "sta" {
+		t.Error("split string, check error! want to get 'sta', but result is:",y)
+	} else {
+		t.Log("split string, check ok!")
+	}
+}
+

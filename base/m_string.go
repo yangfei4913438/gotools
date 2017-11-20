@@ -4,8 +4,10 @@ import (
 	"strings"
 )
 
-//截取字符串，参数：字符串，开始下标，结束下标[包含结束下标对应的值]
+//截取字符串，参数：字符串，开始顺序[第一个数开始算，不是索引，索引是从0开始，顺序是从1开始]，结束顺序[第几个字符，包含这个字符]
 func Splitstr(str string, start int, end int) string {
+	start--
+	end--
 	end_num := end + 1
 	if end_num > len(str) {
 		end_num = len(str)
