@@ -1,4 +1,4 @@
-package main
+package gotools
 
 import (
 	"errors"
@@ -22,13 +22,12 @@ func Test_CustomError(t *testing.T) {
 
 func Test_Splitstr(t *testing.T) {
 	x := "start_end"
-	
+
 	y := base.Splitstr(x, 1, 3)
-	
+
 	if y != "sta" {
-		t.Error("split string, check error! want to get 'sta', but result is:",y)
+		t.Error("split string, check error! want to get 'sta', but result is:", y)
 	} else {
 		t.Log("split string, check ok!")
 	}
 }
-
