@@ -19,10 +19,10 @@ build:
           go get -t -v .
 
     # Build the project
-    - script:
-        name: go build
-        code: |
-          go build -v ./...
+#    - script:
+#        name: go build
+#        code: |
+#          go build -v ./...
 
     # Test the project
     - script:
