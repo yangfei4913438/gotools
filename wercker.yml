@@ -8,15 +8,15 @@ build:
         code: |
           cd $WERCKER_SOURCE_DIR
           go version
-          go get github.com/codeskyblue/go-sh
-          go get github.com/nu7hatch/gouuid
-          go get github.com/astaxie/beego
-          go get gopkg.in/mgo.v2
-          go get github.com/go-sql-driver/mysql
-          go get github.com/jmoiron/sqlx
-          go get github.com/yangfei4913438/redis-full
-          go get github.com/imroc/req
-          go get -t .
+          go get -v github.com/codeskyblue/go-sh
+          go get -v github.com/nu7hatch/gouuid
+          go get -v github.com/astaxie/beego
+          go get -v gopkg.in/mgo.v2
+          go get -v github.com/go-sql-driver/mysql
+          go get -v github.com/jmoiron/sqlx
+          go get -v github.com/yangfei4913438/redis-full
+          go get -v github.com/imroc/req
+          go get -t -v .
 
     # Build the project
     - script:
