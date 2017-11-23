@@ -39,3 +39,13 @@ func StrHasPrefix(str, prefix string) bool {
 func StrHasSuffix(str, prefix string) bool {
 	return strings.HasSuffix(str, prefix)
 }
+
+// 反转字符串
+// golang这边需要先将字符串string转换成rune类型，而后才能进行对调操作。
+func reverseString(s string) string {
+	runes := []rune(s)
+	for from, to := 0, len(runes)-1; from < to; from, to = from+1, to-1 {
+		runes[from], runes[to] = runes[to], runes[from]
+	}
+	return string(runes)
+}
