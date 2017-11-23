@@ -29,3 +29,13 @@ func StrContains(str, obj string) bool {
 func StrCount(str, obj string) int {
 	return strings.Count(str, obj)
 }
+
+//检查字符串是不是以某个字符或字符串开始的
+func StrHasPrefix(str, prefix string) bool {
+	return strings.HasPrefix(str, prefix)
+}
+
+//检查字符串是不是以某个字符或字符串结尾的
+func StrHasSuffix(str, prefix string) bool {
+	return strings.HasSuffix(str, prefix)
+}
