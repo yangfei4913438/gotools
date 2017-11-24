@@ -12,6 +12,28 @@ func GetTimeZoneTime(timestamp int64, value int) time.Time {
 	return time.Unix(timestamp, 0).UTC().Add(time.Duration(value) * time.Hour)
 }
 
+type FormatTime struct {
+	time.Time
+}
+
+func (t *FormatTime) ToString() string {
+	return t.Format("2006-01-02 15:04:05")
+}
+
+func (t *FormatTime) ToUnix() int64 {
+	//英文时间是东八区的时间，所以去掉8个小时，再转unix就对了
+	return t.UTC().Add(-8 * OneHour).Unix()
+}
+
+//字符串格式化为时间
+func FormatStrTime(time_str string) (*FormatTime, error) {
+	x, err := time.Parse("2006-01-02 15:04:05", time_str)
+	if err != nil {
+		return nil, err
+	}
+	return &FormatTime{x}, nil
+}
+
 //时间戳格式化为字符串，这里默认为东八区的时间戳
 func FormatUnixTime(t int64) string {
 	//默认是东八区的时间戳
