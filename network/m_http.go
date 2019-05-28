@@ -1,118 +1,189 @@
 package network
 
 import (
-	"bytes"
 	"github.com/astaxie/beego"
+	"io"
 	"io/ioutil"
 	"net/http"
-	"time"
+	"strings"
 )
 
-// 第二个参数，没有的时候，可以使用nil传入。
-// 返回值，默认需要用json反序列化处理，具体看服务器返回值
-func HttpGet(url string, headers map[string]string) ([]byte, error) {
-	// 定义一个网络客户端
-	client := &http.Client{}
+type HTTP struct {
+	BaseUrl    string
+	BaseHeader map[string]string
+}
 
-	// 定义请求对象
-	req, err := http.NewRequest("GET", url, nil)
+type HttpResult struct {
+	StatusCode int    `json:"status_code"`
+	Body       []byte `json:"body"`
+}
+
+func (api *HTTP) client(method string, url string, header map[string]string, body io.Reader) (*HttpResult, error) {
+	// 生成请求对象
+	request, err := http.NewRequest(method, url, body)
 	if err != nil {
 		beego.Error(err)
 		return nil, err
 	}
 
-	// 添加头文件
-	for k, v := range headers {
-		req.Header.Add(k, v)
+	// 添加默认头部信息
+	if len(api.BaseHeader) > 0 {
+		for k, v := range api.BaseHeader {
+			request.Header.Add(k, v)
+		}
 	}
 
-	// 定义超时时间为10秒
-	client.Timeout = time.Second * 10
+	// 添加自定义头部信息
+	if len(header) > 0 {
+		for k, v := range header {
+			request.Header.Add(k, v)
+		}
+	}
 
-	// 正式请求
-	result, err := client.Do(req)
-	defer result.Body.Close()
-
-	beego.Trace("response code: ", result.StatusCode)
-
-	send, err := ioutil.ReadAll(result.Body)
+	// 发起 http 请求
+	res, err := http.DefaultClient.Do(request)
+	defer res.Body.Close()
 	if err != nil {
 		beego.Error(err)
 		return nil, err
 	}
 
-	return send, nil
+	// 生成返回数据
+	send, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		beego.Error(err)
+		return nil, err
+	}
+
+	// 返回结果
+	return &HttpResult{res.StatusCode, send}, nil
+}
+
+func (api *HTTP) Get(url string, header map[string]string, params map[string]string) (*HttpResult, error) {
+	// 生成 URL
+	url = api.BaseUrl + url
+	if len(params) > 0 {
+		index := 0
+		for k, v := range params {
+			if index == 0 {
+				url += "?" + k + "=" + v
+			} else {
+				url += "&" + k + "=" + v
+			}
+			index++
+		}
+	}
+
+	return api.client("GET", url, header, nil)
+}
+
+func (api *HTTP) Post(url string, header map[string]string, data []byte) (*HttpResult, error) {
+	// 生成 URL
+	url = api.BaseUrl + url
+
+	return api.client("POST", url, header, strings.NewReader(string(data)))
+}
+
+func (api *HTTP) Put(url string, header map[string]string, data []byte) (*HttpResult, error) {
+	// 生成 URL
+	url = api.BaseUrl + url
+
+	return api.client("PUT", url, header, strings.NewReader(string(data)))
+}
+
+// 如果是从 data 参数中定义删除参数，使用这个方法
+func (api *HTTP) DeleteFromData(url string, header map[string]string, data []byte) (*HttpResult, error) {
+	// 生成 URL
+	url = api.BaseUrl + url
+
+	return api.client("DELETE", url, header, strings.NewReader(string(data)))
+}
+
+// 如果是从 url 参数中定义删除参数，使用这个方法
+func (api *HTTP) DeleteFromParams(url string, header map[string]string, params map[string]string) (*HttpResult, error) {
+	// 生成 URL
+	url = api.BaseUrl + url
+	if len(params) > 0 {
+		index := 0
+		for k, v := range params {
+			if index == 0 {
+				url += "?" + k + "=" + v
+			} else {
+				url += "&" + k + "=" + v
+			}
+			index++
+		}
+	}
+
+	return api.client("DELETE", url, header, nil)
 }
 
 /*
-使用范例
+func main ()  {
+	var axios HTTP
+	axios.BaseHeader = map[string]string{"X-Access-Token": "test"}
 
-auth_url := "http://127.0.0.1:9000/api/v1/auth"
+	// GET
+	//params := map[string]string{"id": "5"}
+	//res, err := axios.Get("http://127.0.0.1:8060/test/api/v1/user", nil, params)
+	//fmt.Println(err)
+	//type User struct {
+	//	Name  string `json:"name"`
+	//	Age   int64  `json:"age"`
+	//	Email string `json:"email"`
+	//}
+	//var user User
+	//_ = json.Unmarshal(res.Body, &user)
+	//fmt.Println(user, res.StatusCode)
 
-var headers = make(map[string]string)
-headers["x-us-authtype"] = "1"
-headers["x-us-token"] = "1111111"
-headers["accept-language"] = "zh-cn"
-headers["time-zone"] = "-8"
+	// POST
+	//var send = map[string]interface{}{
+	//	"name": "李雷",
+	//	"age": 19,
+	//	"email":"lilei@qq.com",
+	//}
+	//data, _ := json.Marshal(send)
+	//res, err := axios.Post("http://127.0.0.1:8060/test/api/v1/user", nil, data)
+	//fmt.Println(err)
+	//type Result struct {
+	//	Code int64 `json:"code"`
+	//	Message string `json:"message"`
+	//}
+	//var rt Result
+	//_ = json.Unmarshal(res.Body, &rt)
+	//fmt.Println(rt, res.StatusCode)
 
-res, err := HttpGet(auth_url, headers)
-if err != nil {
-	beego.Error(err)
-}
+	// PUT
+	//var send = map[string]interface{}{
+	//	"id": 1,
+	//	"name": "韩梅梅",
+	//	"age": 19,
+	//	"email":"hanmeimei@qq.com",
+	//}
+	//data, _ := json.Marshal(send)
+	//res, err := axios.Put("http://127.0.0.1:8060/test/api/v1/user", nil, data)
+	//fmt.Println(err)
+	//type Result struct {
+	//	Code int64 `json:"code"`
+	//	Message string `json:"message"`
+	//}
+	//var rt Result
+	//_ = json.Unmarshal(res.Body, &rt)
+	//fmt.Println(rt, res.StatusCode)
 
-// 打印
-beego.Notice(string(res))
-
-// 正常的用法：
-type User struct {
-	ID int `json:id`
-    Name string `json:name`
-}
-
-var u User
-
-if err := json.Unmarshal(res, &u); err != nil {
-	beego.Error(err)
-}
-
-*/
-
-// POST请求，第二个参数没有可以传nil, 第三个参数使用的时候，需要用json序列化之后再传入
-// 返回的对象，可以认为是一个被JSON序列化的对象，直接使用JSON反序列化就可以用了。
-func HttpPost(url string, headers map[string]string, data []byte) ([]byte, error) {
-	// 定义一个网络客户端
-	client := &http.Client{}
-
-	// 定义请求对象
-	req, err := http.NewRequest("POST", url, bytes.NewReader(data))
-	if err != nil {
-		beego.Error(err)
-		return nil, err
+	// DELETE
+	var send = map[string]interface{}{
+		"id": 5,
 	}
-
-	// 添加头文件
-	for k, v := range headers {
-		req.Header.Add(k, v)
+	data, _ := json.Marshal(send)
+	res, err := axios.DeleteFromData("http://127.0.0.1:8060/test/api/v1/user", nil, data)
+	fmt.Println(err)
+	type Result struct {
+		Code int64 `json:"code"`
+		Message string `json:"message"`
 	}
-
-	// 定义超时时间为10秒
-	client.Timeout = time.Second * 10
-
-	// 正式请求
-	result, err := client.Do(req)
-	defer result.Body.Close()
-
-	beego.Trace("response code: ", result.StatusCode)
-
-	send, err := ioutil.ReadAll(result.Body)
-	if err != nil {
-		beego.Error(err)
-		return nil, err
-	}
-
-	return send, nil
+	var rt Result
+	_ = json.Unmarshal(res.Body, &rt)
+	fmt.Println(rt, res.StatusCode)
 }
-
-/*
-和上面GET的用法差不多，唯一差别就是POST，传入的参数，是需要JSON序列化的对象。
 */
