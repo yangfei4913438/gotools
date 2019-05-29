@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-func TimeDiff(oldTime, newTime string) int {
+func TimeDifference(oldTime, newTime string) int {
 	//传入的时间，必须是规定的格式 "2006-01-02 15:04:05"
 	//用于计算2个时间之间有多少秒的差别
 
