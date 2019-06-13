@@ -21,8 +21,7 @@ func (t *FormatTime) ToString() string {
 }
 
 func (t *FormatTime) ToUnix() int64 {
-	//英文时间是东八区的时间，所以去掉8个小时，再转unix就对了
-	return t.UTC().Add(-8 * OneHour).Unix()
+	return time.Now().Unix()
 }
 
 //字符串格式化为时间
@@ -34,10 +33,10 @@ func FormatStrTime(time_str string) (*FormatTime, error) {
 	return &FormatTime{x}, nil
 }
 
-//时间戳格式化为字符串，这里默认为东八区的时间戳
+//时间戳格式化为本地字符串
 func FormatUnixTime(t int64) string {
 	//默认是东八区的时间戳
-	return time.Unix(t, 0).UTC().Add(time.Hour * 8).Format("2006-01-02 15:04:05")
+	return time.Unix(t, 0).Format("2006-01-02 15:04:05")
 }
 
 //获取时区显示字符串
