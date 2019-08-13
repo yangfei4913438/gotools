@@ -2,7 +2,6 @@ package time
 
 import (
 	"fmt"
-	"strconv"
 	"time"
 )
 
@@ -37,15 +36,6 @@ func FormatStrTime(time_str string) (*FormatTime, error) {
 func FormatUnixTime(t int64) string {
 	//默认是东八区的时间戳
 	return time.Unix(t, 0).Format("2006-01-02 15:04:05")
-}
-
-//获取时区显示字符串
-func GetTimeZone(value int) string {
-	if value >= 0 {
-		return "(GMT +0" + strconv.Itoa(value) + ":00)"
-	} else {
-		return "(GMT -0" + strconv.Itoa(value) + ":00)"
-	}
 }
 
 //完整的日期和时间
